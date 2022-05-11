@@ -1,11 +1,12 @@
 :root {
-  --lane-top-pos: 2rem;
-  --lane-border-color: #776050;
-  --lane-border-width: 0.2rem;
-  --block-size: 4rem;
-  --lane-blocks: 10;
-  /* the 0.4rem at the end might be border width? */
-  --lane-height: calc(var(--block-size)*var(--lane-blocks) + var(--block-size)*0.5 + 0.4rem);
+	--num-lanes: 5;
+	--lane-top-pos: 2rem;
+	--lane-border-color: #776050;
+	--lane-border-width: 0.2rem;
+	--block-size: 4rem;
+	--lane-blocks: 10;
+	/* the 0.4rem at the end might be border width? */
+	--lane-height: calc(var(--block-size)*var(--lane-blocks) + var(--block-size)*0.5 + 0.4rem);
 }
 
 html {
@@ -14,7 +15,7 @@ html {
 }
 
 body {
-	background: #333;
+	background: #282828;
 	color: #ddd;
 	padding: 0;
 	margin: 0;
@@ -66,6 +67,7 @@ body {
 .lane {
 	display: inline-block;
 	position: fixed;
+	background: #333;
 	top: calc(var(--lane-top-pos));
 	flex-direction: column;
 	align-items: flex-start;
@@ -80,6 +82,9 @@ body {
 	margin: 0;
 	box-sizing: border-box;
 }
+.lane:hover {
+	background: linear-gradient(#333 80%, #367);
+}
 .lane:first-child {
 	border-left-width: calc(var(--lane-border-width));
 	border-top-left-radius: 0.8rem;
@@ -88,43 +93,42 @@ body {
 	border-right-width: calc(var(--lane-border-width));
 	border-top-right-radius: 0.8rem;
 }
+/* TODO: generate these lane-specific rules dynamically */
 #lane_0 {
-	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2);
+	left: calc(50% - (var(--num-lanes)*(var(--block-size) + 0.4rem))/2);
 }
 #lane_1 {
-	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 1*(var(--block-size) + 0.4rem));
+	left: calc(50% - (var(--num-lanes)*(var(--block-size) + 0.4rem))/2 + 1*(var(--block-size) + 0.4rem));
 }
 #lane_2 {
-	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 2*(var(--block-size) + 0.4rem));
+	left: calc(50% - (var(--num-lanes)*(var(--block-size) + 0.4rem))/2 + 2*(var(--block-size) + 0.4rem));
 }
 #lane_3 {
-	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 3*(var(--block-size) + 0.4rem));
+	left: calc(50% - (var(--num-lanes)*(var(--block-size) + 0.4rem))/2 + 3*(var(--block-size) + 0.4rem));
 }
 #lane_4 {
-	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 4*(var(--block-size) + 0.4rem));
+	left: calc(50% - (var(--num-lanes)*(var(--block-size) + 0.4rem))/2 + 4*(var(--block-size) + 0.4rem));
 }
 #lane_5 {
-	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 5*(var(--block-size) + 0.4rem));
+	left: calc(50% - (var(--num-lanes)*(var(--block-size) + 0.4rem))/2 + 5*(var(--block-size) + 0.4rem));
 }
 #lane_6 {
-	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 6*(var(--block-size) + 0.4rem));
+	left: calc(50% - (var(--num-lanes)*(var(--block-size) + 0.4rem))/2 + 6*(var(--block-size) + 0.4rem));
 }
 #lane_7 {
-	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 7*(var(--block-size) + 0.4rem));
+	left: calc(50% - (var(--num-lanes)*(var(--block-size) + 0.4rem))/2 + 7*(var(--block-size) + 0.4rem));
 }
 #lane_8 {
-	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 8*(var(--block-size) + 0.4rem));
-}
-.lane:hover {
-	background: linear-gradient(transparent 80%, #367);
+	left: calc(50% - (var(--num-lanes)*(var(--block-size) + 0.4rem))/2 + 8*(var(--block-size) + 0.4rem));
 }
 
 .play-container {
+	opacity: 0.6;
 	display: inline-block;
 	position: fixed;
 	top: calc(var(--lane-top-pos) + var(--lane-height) + 2rem);
 	width: calc(var(--block-size) + var(--block-size)*0.75) + 1rem;
-	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + (var(--block-size) + 0.4rem)*2);
+	left: calc(50% - (var(--num-lanes)*(var(--block-size) + 0.4rem))/2 + (var(--block-size) + 0.3rem)*2);
 	/* background: #444; */
 	border: 0.2rem solid white;
 	border-style: none;

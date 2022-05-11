@@ -48,7 +48,7 @@ let lane_elements = [];
 
 let game_mode = 'MENU';
 
-high_score.innerHTML = localStorage.getItem('high-score') || 0;
+set_score(high_score, JSON.parse(localStorage.getItem('high-score') || '0'));
 
 
 function get_css_property(name)
@@ -90,6 +90,8 @@ function create_block_style(name)
 function setup_lanes()
 {
 	const num_lanes = game_config.num_lanes || 5;
+
+	set_css_property('--num-lanes', num_lanes);
 
 	lane_elements = [];
 	for(let idx = 0; idx < num_lanes; idx++)
@@ -169,7 +171,7 @@ function clear_game()
 	for(let lane of lane_elements)
 		lane.innerHTML = '';
 
-	score.innerHTML = '0';
+	set_score(score, 0);
 
 	play_container.innerHTML = '';
 	current_block = null;
@@ -178,16 +180,27 @@ function clear_game()
 	save_game_state();
 }
 
+function get_score(element)
+{
+	return parseInt(element.getAttribute('score'));
+}
+
+function set_score(element, total)
+{
+	element.innerHTML = total.toLocaleString('en');
+	element.setAttribute('score', total);
+}
+
 function add_score(points)
 {
-	const current = parseInt(score.innerHTML);
+	const current = get_score(score);
 	const new_score = current + points
-	score.innerHTML = new_score;
+	set_score(score, new_score);
 
-	const high = parseInt(high_score.innerHTML);
+	const high = get_score(high_score);
 
 	if(new_score > high)
-		high_score.innerHTML = new_score;
+		set_score(high_score, new_score);
 }
 
 function game_over()
@@ -212,9 +225,9 @@ function show_game_over()
 	remove_event_handlers();
 	save_game_state();
 
-	let message = 'This game is over!\n\nScore: ' + score.innerHTML;
+	let message = 'This game is over!\n\nScore: ' + get_score(score);
 
-	if(score.innerHTML === high_score.innerHTML && parseInt(score.innerHTML) > 0)
+	if(get_score(score) === get_score(high_score))
 		message += '\n\nYou set a new high score!';
 
 	alert(message);
@@ -229,18 +242,19 @@ function save_game_state()
 {
 	if(game_mode !== 'PLAYING')
 	{
-		localStorage.setItem('game-state', 'null');
+		localStorage.removeItem('game-state');
 		return;
 	}
-
-	localStorage.setItem('high-score', high_score.innerHTML);
 
 	if(save_timer !== null)
 		clearTimeout(save_timer);
 
 	save_timer = setTimeout(_ => {
+
+		localStorage.setItem('high-score', get_score(high_score));
+
 		const state = {
-			score: parseInt(score.innerHTML),
+			score: get_score(score),
 			lanes: {},
 			next_blocks: [],
 		};
@@ -248,9 +262,11 @@ function save_game_state()
 		for(let lane of lane_elements)
 		{
 			const lane_num = parseInt(lane.id.substring(5));
-			state.lanes[lane_num] = [];
+			const lane_blocks = [];
 			for(var block of lane.children)
-				state.lanes[lane_num].push(block_name(block));
+				lane_blocks.push(block_name(block));
+			if(lane_blocks.length > 0)
+				state.lanes[lane_num] = lane_blocks;
 		}
 
 		let value = JSON.stringify(state);
@@ -259,18 +275,91 @@ function save_game_state()
 	}, 1000);
 }
 
-function merge_blocks(lane)
+function merge_blocks(num, idx)
 {
-	console.log('TODO: MERGE!');
+	console.log('MERGE lane:', num, 'idx:', idx);
 
-	const merged = [];
 
 	// TODO: start try-to-merge at the top of lane 'lane'
 	//   i.e. check above, left and right neighbors
 	//   this is also recursive
 
+	const subject_lane = lane_elements[num];
+	if(subject_lane.children.length === 0)
+		return [];
+	let subject_idx = idx? idx: subject_lane.children.length - 1;
+	let subject_block = subject_lane.children[subject_idx];
+	let subject_name = block_name(subject_block);
 
-	return merged;
+	let candidates = [];
+	const merged = [ subject_name ]; // if candidates are found
+
+	let affected_lanes = [ num ]; // if candidates are found
+
+	if(subject_idx > 0)
+	{
+		const top_neighbor = subject_lane.children[subject_idx - 1];
+		if(block_name(top_neighbor) === subject_name)
+		{
+			candidates.push(top_neighbor);
+			merged.push(block_name(top_neighbor));
+		}
+	}
+	if(num > 0)
+	{
+		let left_lane = lane_elements[num - 1];
+		if(left_lane.children.length > subject_idx)
+		{
+			let left_neighbor = left_lane.children[subject_idx];
+			if(block_name(left_neighbor) === subject_name)
+			{
+				candidates.push(left_neighbor);
+				affected_lanes.push(num - 1);
+				merged.push(block_name(left_neighbor));
+			}
+		}
+	}
+	if(num < lane_elements.length - 1)
+	{
+		let right_lane = lane_elements[num + 1];
+		if(right_lane.children.length > subject_idx)
+		{
+			let right_neighbor = right_lane.children[subject_idx];
+			if(block_name(right_neighbor) === subject_name)
+			{
+				candidates.push(right_neighbor);
+				affected_lanes.push(num + 1);
+				merged.push(block_name(right_neighbor));
+			}
+		}
+	}
+
+	if(candidates.length > 0)
+	{
+		// merge the blocks in 'candidates'
+		console.log('MERGE candidates:', candidates);
+
+		let new_name = subject_name;
+		for(let block of candidates)
+		{
+			block.parentElement.removeChild(block);
+			// TODO: animate 'block' merging into 'subject_block'
+
+			// 2 + 2 = 4, 2 + 2 + 2 = 8, etc
+			new_name = next_block_name(new_name)
+		}
+
+		subject_block.parentElement.removeChild(subject_block);
+		let new_block = create_block_element(new_name);
+		subject_lane.appendChild(new_block);
+
+		for(let a_num of affected_lanes)
+			merged.push(...merge_blocks(a_num));
+
+		return merged;
+	}
+
+	return [];
 }
 
 function block_value(name)
@@ -417,14 +506,24 @@ function choose_play_block()
 		}
 	}
 
-	// TODO: if the highest is "very low", the next higher up is also ok
+	// if the highest is "very low", the next higher up is also ok
 	//   "very low" might be something like 8 or maybe 16.
-	console.log('highest_value:', highest_value);
+	// console.log('highest_value:', highest_value);
 
+	let selection_set = [];
 	if(highest_value <= minimum_blocks[minimum_blocks.length - 1])
-		return minimum_blocks[Math.floor(Math.random()*minimum_blocks.length)];
+		selection_set = minimum_blocks;
+	else
+	{
+		for(let block_name = next_block_name(''); true; block_name = next_block_name(block_name))
+		{
+			selection_set.push(block_name);
+			if(block_name === highest_block)
+				break;
+		}
+	}
 
-	return highest_block;
+	return selection_set[Math.floor(Math.random()*selection_set.length)];
 }
 
 function clear_play_block()
@@ -450,16 +549,25 @@ function lane_hover(num, entered)
 		// console.log('current_block_hover:', current_block_hover.style);
 
 		document.body.appendChild(current_block_hover);
-		current_block_hover.style = 'left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + ' + num + '*(var(--block-size) + 0.4rem) + 0.6rem);';
+		current_block_hover.style = 'left: calc(50% - (var(--num-lanes)*(var(--block-size) + 0.4rem))/2 + ' + num + '*(var(--block-size) + 0.4rem) + 0.6rem);';
 	}
 }
 
+let click_busy = false;
+
 function lane_click(num)
 {
+	if(click_busy)
+		return;
+	click_busy = true;
+
 	lane_hover(num, false);
 	let result = add_block(num, current_block);
 	if(result)
 		lane_hover(num, true);
+
+	click_busy = false;
+
 	return result;
 }
 
