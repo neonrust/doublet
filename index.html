@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html
   <head>
 	<title>Doublet</title>
@@ -7,55 +8,15 @@
 	<div class="score-container">
 	  <span class="score">
 		<div class="label">Score</div>
-		<div id="score">0</div>
+		<div id="score"></div>
 	  </span>
 	  <span class="score high-score">
 		<div class="label">High-score</div>
-		<div id="high_score">0</div>
+		<div id="high_score"></div>
 	  </span>
 	</div>
-	<!--div class="lane-container"-->
-	  <span class="lane" id="lane_0">
-		<span class="block block_2"></span>
-		<span class="block block_32"></span>
-	  </span>
-	  </span>
-	  <span class="lane" id="lane_1">
-		<span class="block block_32"></span>
-		<span class="block block_16"></span>
-	  </span>
-	  <span class="lane" id="lane_2">
-		<span class="block block_8k"></span>
-		<span class="block block_16k"></span>
-	  </span>
-	  <span class="lane" id="lane_3">
-		<span class="block block_1k"></span>
-		<span class="block block_2k"></span>
-		<span class="block block_4M"></span>
-		<span class="block block_8G"></span>
-		<span class="block block_16T"></span>
-		<span class="block block_32P"></span>
-		<span class="block block_64E"></span>
-		<span class="block block_128Y"></span>
-		<span class="block block_256Z"></span>
-	  </span>
-	  <span class="lane" id="lane_4">
-		<span class="block block_1"></span>
-		<span class="block block_2"></span>
-		<span class="block block_4"></span>
-		<span class="block block_8"></span>
-		<span class="block block_16"></span>
-		<span class="block block_32"></span>
-		<span class="block block_64"></span>
-		<span class="block block_128"></span>
-		<span class="block block_256"></span>
-		<span class="block block_512"></span>
-	  </span>
-	<!--/div-->
-	  <div class="play-container">
-		<span class="block current-block block_32M"></span>
-		<span class="block small next-block block_64k"></span>
-	  </div>
-	  <script src="doublet.js"></script>
+	<span id="lane_container"></span>
+	<div id="play_container" class="play-container"></div>
+	<script src="doublet.js"></script>
   </body>
 </html>

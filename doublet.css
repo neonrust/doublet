@@ -1,20 +1,25 @@
+:root {
+  --lane-top-pos: 2rem;
+  --lane-border-color: #776050;
+  --lane-border-width: 0.2rem;
+  --block-size: 4rem;
+  --lane-blocks: 10;
+  /* the 0.4rem at the end might be border width? */
+  --lane-height: calc(var(--block-size)*var(--lane-blocks) + var(--block-size)*0.5 + 0.4rem);
+}
+
 html {
 	padding: 0;
 	margin: 0;
 }
-:root {
-  --lane-height: 42.3rem;
-  --lane-left-pos: 4rem;
-  --lane-border-color: #865;
-  --block-size: 4rem;
-}
 
 body {
-	background: #222;
+	background: #333;
 	color: #ddd;
 	padding: 0;
 	margin: 0;
 	user-select: none;
+	font-family: ubuntu;
 }
 
 .score-container {
@@ -23,53 +28,67 @@ body {
 
 .score {
 	display: inline-block;
-	width: 10rem;
-	height: 3.2rem;
+	width: 11rem;
+	height: 4rem;
 	padding: 0.3rem;
+	padding-right: 0.4rem;
+	padding-left: 0.4rem;
+	margin: 0;
 	background: #444;
 	color: white;
 	float: left;
+	box-sizing: border-box;
+	box-shadow: 0 0 2rem rgba(0, 0, 0, 0.3);
+	border: 0.2rem solid #333;
+	border-top: none;
+	border-left-style: none;
+	border-bottom-right-radius: 1rem;
+	border-bottom-left-radius: 0;
 
-	text-align: center;
+	text-align: right;
 	font-size: 2rem;
 	font-weight: bold;
 }
 .score .label {
+	color: #bbb;
 	font-size: 0.9rem;
 	font-weight: normal;
+	text-align: left;
 }
 .high-score {
 	float: right;
+	border-left-style: solid;
+	border-bottom-left-radius: 1rem;
+	border-right-style: none;
+	border-bottom-right-radius: 0;
 }
 
-.lane-container {
-	background: #282828;
-	width: calc(4rem * 10 + 1rem);
-	height: 40rem;
-	padding: 0;
-	margin: 0;
-	margin-left: auto;
-	margin-right: auto;
-}
 .lane {
 	display: inline-block;
 	position: fixed;
-	top: 6rem;
+	top: calc(var(--lane-top-pos));
 	flex-direction: column;
 	align-items: flex-start;
 	width: 4.4rem;
 	height: var(--lane-height);
-	border: 0.2rem solid var(--lane-border-color);
-	border-left-width: 0.1rem;
-	border-right-width: 0.1rem;
+	border: var(--lane-border-width) solid var(--lane-border-color);
+	border-top-width: calc(var(--lane-border-width)*2.0);
+	border-left-width: calc(var(--lane-border-width)*0.5);
+	border-right-width: calc(var(--lane-border-width)*0.5);
 	border-bottom: none;
 	padding: 0;
 	margin: 0;
 	box-sizing: border-box;
 }
-#lane_0 {
-	border-left-width: 0.2rem;
+.lane:first-child {
+	border-left-width: calc(var(--lane-border-width));
 	border-top-left-radius: 0.8rem;
+}
+.lane:last-child {
+	border-right-width: calc(var(--lane-border-width));
+	border-top-right-radius: 0.8rem;
+}
+#lane_0 {
 	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2);
 }
 #lane_1 {
@@ -83,35 +102,42 @@ body {
 }
 #lane_4 {
 	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 4*(var(--block-size) + 0.4rem));
-	border-right-width: 0.2rem;
-	border-top-right-radius: 0.8rem;
+}
+#lane_5 {
+	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 5*(var(--block-size) + 0.4rem));
+}
+#lane_6 {
+	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 6*(var(--block-size) + 0.4rem));
+}
+#lane_7 {
+	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 7*(var(--block-size) + 0.4rem));
+}
+#lane_8 {
+	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + 8*(var(--block-size) + 0.4rem));
 }
 .lane:hover {
 	background: linear-gradient(transparent 80%, #367);
 }
-.lane-slit {
-	display: inline-block;
-	width: 0.2rem;
-	height: 100%;/* calc(6rem * 9); */
-	background: #555;
-	/* margin-top: 2rem; */
-}
+
 .play-container {
 	display: inline-block;
 	position: fixed;
-	top: 50rem;
-	width: 8rem;
-	left: calc(50% - 8rem/2);
+	top: calc(var(--lane-top-pos) + var(--lane-height) + 2rem);
+	width: calc(var(--block-size) + var(--block-size)*0.75) + 1rem;
+	left: calc(50% - (5*(var(--block-size) + 0.4rem))/2 + (var(--block-size) + 0.4rem)*2);
 	/* background: #444; */
 	border: 0.2rem solid white;
+	border-style: none;
+	border-top-style: solid;
 	padding: 0.3rem;
+	box-sizing: border-box;
 }
 
 .block {
 	display: inline-block;
 	background: gray;
 	text-shadow: 0 0 0.2rem white;
-	box-shadow: inset 0 0 0.2rem black;
+	box-shadow: inset 0 0 0.2rem black, 0 0.2rem 0.5rem black;
 	color: black;
 	width: var(--block-size);
 	height: var(--block-size);
@@ -119,16 +145,13 @@ body {
 	border-radius: 0.5rem;
 	border-style: none;
 	border-width: 0.3rem;
-	/* border-color: white; */
 	border-left-color: white;
 	border-right-color: white;
-	border-top-color: #ff7;
-	border-bottom-color:  #ff7;
+	border-top-color: #ff6;
+	border-bottom-color:  #ff6;
 	margin: 0.1rem;
 
 	text-align: center;
-	vertical-align: center;
-
 	font-size: 1.4rem;
 	font-weight: bold;
 	box-sizing: border-box;
@@ -137,15 +160,17 @@ body {
 }
 
 .small {
-	width: 3rem;
-	height: 3rem;
-	line-height: 3rem;
+	width: calc(var(--block-size)*0.75);
+	height: calc(var(--block-size)*0.75);
+	position: relative;
+	top: calc(var(--block-size)*0.25/2);
+	line-height: calc(var(--block-size)*0.75);
 
 	font-size: 1.3rem;
 }
 
 .block-pending {
 	position: fixed;
-	top: 47rem;
+	top: calc(var(--lane-top-pos) + var(--lane-height) - calc(var(--block-size)*0.75/2));
 	box-shadow: 0 0 0.6rem 0.3rem white;
 }
